@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import dotenv from 'dotenv';
-import apiRoutes from '@/routes/api';
+import apiRoutes from './routes/api';
 import { errorHandler, notFoundHandler, requestLogger } from '@/middleware/errorHandler';
 
 // Load environment variables
@@ -42,6 +42,18 @@ app.set('trust proxy', 1);
 
 // API routes
 app.use('/api', apiRoutes);
+
+// Health check endpoint
+app.get('/api/health', (_, res) => {
+  res.json({
+    success: true,
+    status: 'healthy',
+    message: 'Udyam Registration API is running',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
 
 // Root endpoint
 app.get('/', (_, res) => {

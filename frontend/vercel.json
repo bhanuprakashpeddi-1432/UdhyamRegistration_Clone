@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "name": "udyam-registration-frontend",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@backend-api-url",
+    "NEXT_PUBLIC_ENVIRONMENT": "production"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "@backend-api-url",
+      "NEXT_PUBLIC_ENVIRONMENT": "production"
+    }
+  },
+  "functions": {
+    "app/**": {
+      "maxDuration": 30
+    }
+  },
+  "regions": ["iad1"]
+}
