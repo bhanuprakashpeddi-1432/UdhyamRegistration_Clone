@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UdyamSubmission {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Step 1 - Aadhaar Details
+  aadhaarNumber     String   @db.VarChar(12)
+  mobileNumber      String   @db.VarChar(10)
+  otpVerified       Boolean  @default(false)
+  
+  // Step 2 - Enterprise Details
+  panNumber         String   @db.VarChar(10)
+  enterpriseName    String   @db.VarChar(100)
+  enterpriseType    String   @db.VarChar(50)
+  commencementDate  DateTime
+  address           String   @db.Text
+  pincode           String   @db.VarChar(6)
+  state             String   @db.VarChar(50)
+  district          String   @db.VarChar(50)
+  emailId           String?  @db.VarChar(100)
+  
+  // Form Meta
+  currentStep       Int      @default(1)
+  isComplete        Boolean  @default(false)
+  submissionId      String   @unique @default(cuid())
+  
+  // Audit Fields
+  ipAddress         String?  @db.VarChar(45)
+  userAgent         String?  @db.Text
+  
+  @@map("udyam_submissions")
+  @@index([aadhaarNumber])
+  @@index([panNumber])
+  @@index([submissionId])
+  @@index([createdAt])
+}
+
+model OTPVerification {
+  id            String   @id @default(cuid())
+  mobileNumber  String   @db.VarChar(10)
+  otp           String   @db.VarChar(6)
+  isVerified    Boolean  @default(false)
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  attempts      Int      @default(0)
+  
+  @@map("otp_verifications")
+  @@index([mobileNumber])
+  @@index([expiresAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   @db.VarChar(50)
+  resource  String   @db.VarChar(50)
+  resourceId String? @db.VarChar(100)
+  details   Json?
+  ipAddress String?  @db.VarChar(45)
+  userAgent String?  @db.Text
+  createdAt DateTime @default(now())
+  
+  @@map("audit_logs")
+  @@index([action])
+  @@index([resource])
+  @@index([createdAt])
+}
